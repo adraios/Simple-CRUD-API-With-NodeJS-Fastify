@@ -13,12 +13,23 @@ class DBInstance
             port: process.env.DB_PORT
         };
 
-        this.sequelize = new Sequelize(dbCfg.database, dbCfg.user, dbCfg.password, {
+        const options = {
             host: dbCfg.host,
             dialect: 'postgres',
-            logging: false,
-            
-        });
+            logging: false
+        };
+
+        if (process.env.SSL === 'true')
+        {
+            options.dialectOptions = {
+                ssl: {
+                    require: true,
+                    rejectUnauthorized: false
+                }
+            };
+        }
+
+        this.sequelize = new Sequelize(dbCfg.database, dbCfg.user, dbCfg.password, options);
     }
 }
 
